@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include QMK_KEYBOARD_H
 
-#include "features/achordion.h"
 #include "features/custom_shift_keys.h"
 
 #include "keymap_japanese.h"
@@ -144,8 +143,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                              _______, _______, _______, _______, _______, _______, XXXXXXX, _______, XXXXXXX, _______),
 };
 
+const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM =
+    LAYOUT_split_4x6_5(
+        'L', 'L', 'L', 'L', 'L', 'L',  'R', 'R', 'R', 'R', 'R', 'R',
+        'L', 'L', 'L', 'L', 'L', 'L',  'R', 'R', 'R', 'R', 'R', 'R',
+        'L', 'L', 'L', 'L', 'L', 'L',  'R', 'R', 'R', 'R', 'R', 'R',
+        'L', 'L', 'L', 'L', 'L', 'L',  'R', 'R', 'R', 'R', 'R', 'R',
+             '*', '*', '*', '*', '*',  '*', '*', '*', '*', '*'
+);
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (!process_achordion(keycode, record)) { return false; }
     if (!process_custom_shift_keys(keycode, record)) { return false; }
     switch (keycode) {
         case DCOLON:
@@ -160,18 +167,4 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
     }
     return true;
-}
-
-void matrix_scan_user(void) {
-    achordion_task();
-}
-
-bool achordion_chord(uint16_t tap_hold_keycode,
-                     keyrecord_t* tap_hold_record,
-                     uint16_t other_keycode,
-                     keyrecord_t* other_record) {
-    if (tap_hold_record->event.key.row % (MATRIX_ROWS / 2) >= 3) { return true; }
-    if (other_record->event.key.row % (MATRIX_ROWS / 2) >= 3) { return true; }
-    /*if (tap_hold_record > KC_Z) { return true; }*/
-    return achordion_opposite_hands(tap_hold_record, other_record);
 }
