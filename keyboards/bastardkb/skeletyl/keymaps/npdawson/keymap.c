@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include QMK_KEYBOARD_H
 
-#include "features/achordion.h"
 #include "features/custom_shift_keys.h"
 
 #define LGTA LGUI_T(KC_A)
@@ -98,7 +97,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                    //--------------------------------------------//---------------------------------------//
                                       _______, _______, _______,    KC_TAB, KC_P0, KC_PENT),
 
-    [_NAV] = LAYOUT_split_3x5_3(_______, _______, KC_TAB, _______, XXXXXXX,    KC_HOME, KC_PGDN, KC_PGUP, KC_END, KC_MUTE,
+    [_NAV] = LAYOUT_split_3x5_3(A(KC_TAB), _______, KC_TAB, _______, XXXXXXX,    KC_HOME, KC_PGDN, KC_PGUP, KC_END, KC_MUTE,
                    //--------------------------------------------//----------------------------------------------//
                    C(KC_A), KC_LALT, KC_LCTL, KC_LSFT, XXXXXXX,   KC_LEFT, KC_DOWN, KC_UP,   KC_RIGHT, KC_VOLU,
                    //--------------------------------------------//----------------------------------------------//
@@ -124,7 +123,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (!process_achordion(keycode, record)) { return false; }
     if (!process_custom_shift_keys(keycode, record)) { return false; }
     switch (keycode) {
         case DCOLON:
@@ -139,18 +137,4 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
     }
     return true;
-}
-
-void matrix_scan_user(void) {
-    achordion_task();
-}
-
-bool achordion_chord(uint16_t tap_hold_keycode,
-                     keyrecord_t* tap_hold_record,
-                     uint16_t other_keycode,
-                     keyrecord_t* other_record) {
-    if (tap_hold_record->event.key.row % (MATRIX_ROWS / 2) >= 3) { return true; }
-    if (other_record->event.key.row % (MATRIX_ROWS / 2) >= 3) { return true; }
-    /*if (tap_hold_record > KC_Z) { return true; }*/
-    return achordion_opposite_hands(tap_hold_record, other_record);
 }
